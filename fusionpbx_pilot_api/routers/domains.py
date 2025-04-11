@@ -16,7 +16,7 @@ async def domains_list(
     return fusionpbx.domains.list()
 
 
-@router_v1.put('/domain/{domain}')
+@router_v1.put('/domain/{domain}', status_code=201)
 async def domain_create(
     domain: str,
     access_token_info: FiefAccessTokenInfo = Depends(
@@ -41,7 +41,7 @@ async def domain_create(
 #     return d
 
 
-@router_v1.delete('/v1/domain/{domain}')
+@router_v1.delete('/v1/domain/{domain}', status_code=204)
 async def domain_delete(
     domain: str,
     access_token_info: FiefAccessTokenInfo = Depends(
