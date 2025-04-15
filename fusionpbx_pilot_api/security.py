@@ -2,10 +2,7 @@ from fastapi.security import OAuth2AuthorizationCodeBearer
 from fief_client import FiefAsync
 from fief_client.integrations.fastapi import FiefAuth
 
-from fusionpbx_pilot_api.settings import Settings
-
-config = Settings()
-
+from fusionpbx_pilot_api.settings import config
 
 fief = FiefAsync(config.fief_base_url, config.fief_client_id, config.fief_client_secret)
 

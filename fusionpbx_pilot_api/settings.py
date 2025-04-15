@@ -18,3 +18,5 @@ class Settings(BaseSettings):
     fief_token_path: str = '/api/token'
     fief_client_id: str
     fief_client_secret: str
+
+config = Settings()
