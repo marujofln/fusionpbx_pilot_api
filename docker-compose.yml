@@ -1,0 +1,45 @@
+# version: '3.8'
+
+services:
+  fpbxapi:
+    build: .
+    container_name: fpbxapi
+    hostname: fpbxapi
+    restart: unless-stopped
+    expose:
+      - "8000"
+      - "8001"
+#    environment:
+
+    depends_on:
+      - db
+    command: ["./run.sh"]
+
+    networks:
+      - fpbxapi-network
+
+
+
+  caddy:
+    image: caddy:2.9.1-alpine
+    container_name: fusionpbx-api-caddy
+    command: caddy reverse-proxy --from https://fusionpbxapi.example.com:8000 --to http://fpbxapi:8000
+    hostname: caddy
+    restart: unless-stopped
+    ports:
+      - 443:443
+    volumes:
+      # - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy:/data
+
+    networks:
+      - fpbxapi-network
+    
+    depends_on:
+    - app
+
+volumes:
+  caddy:
+
+networks:
+  fpbxapi-network:
