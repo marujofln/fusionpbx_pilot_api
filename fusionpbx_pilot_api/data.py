@@ -7,7 +7,7 @@ from webdriver_manager.firefox import GeckoDriverManager
 from fusionpbx_pilot_api.settings import config
 
 options = Options()
-# options.add_argument('--headless')  # Run in headless mode
+options.add_argument('--headless')  # Run in headless mode
 
 service = FirefoxService(GeckoDriverManager().install())
 
