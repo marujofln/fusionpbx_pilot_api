@@ -11,6 +11,10 @@ anyio==4.9.0 \
     #   httpx
     #   starlette
     #   watchfiles
+async-timeout==5.0.1 ; python_full_version < '3.11.3' \
+    --hash=sha256:39e3809566ff85354557ec2398b55e096c8364bacac9405a7a1fa429e77fe76c \
+    --hash=sha256:d9321a7a3d5a6a5e187e824d2fa0793ce379a202935782d555d6e9d2735677d3
+    # via redis
 attrs==25.3.0 \
     --hash=sha256:427318ce031701fea540783410126f03899a97ffc6f61596ad581ac2e40e3bc3 \
     --hash=sha256:75d7cefc7fb576747b2c81b4442d4d4a1ce0900973527c011d1030fd3bf4af1b
@@ -188,6 +192,8 @@ dnspython==2.7.0 \
     --hash=sha256:b4c34b7d10b51bcc3a5071e7b8dee77939f1e878477eeecc965e9835f63c6c86 \
     --hash=sha256:ce9c432eda0dc91cf618a5cedf1a4e142651196bbcd2c80e89ed5a907e5cfaf1
     # via email-validator
+dotenv==0.9.9 \
+    --hash=sha256:29cf74a087b31dafdb5a446b6d7e11cbce8ed2741540e2339c69fbef92c94ce9
 email-validator==2.2.0 \
     --hash=sha256:561977c2d73ce3611850a06fa56b414621e0c8faa9d66f2611407d87465da631 \
     --hash=sha256:cb690f344c617a714f22e66ae771445a1ceb46821152df8e165c5f9a364582b7
@@ -211,9 +217,9 @@ fief-client==0.20.0 \
     --hash=sha256:425f40cc7c45c651daec63da402e033c53d91dcaa3f9bf208873fd8692fc16dc \
     --hash=sha256:dbfb906d03c4a5402ceac5c843aa4708535fb6f5d5c1c4e263ec06fbbbc434d7
     # via fusionpbx-pilot-api
-fusionpbx-pilot==0.1.2 \
-    --hash=sha256:133b40ec3fe0f237227966dfea8d08994fccab6b71fff086b62548f4e6423fe1 \
-    --hash=sha256:38ebd6c65cc2f3ffe74130e177ea423372c8d1d9b6f7a039aec575e979edf87a
+fusionpbx-pilot==0.2.2 \
+    --hash=sha256:97bd025ca1e1886b6430db6db3187eda406d2ead369c4ac1ba93085a9bb4f341 \
+    --hash=sha256:9cad2b7c246891abd817266065dd26f76f93314e24e99c0f04d71f695505d89a
     # via fusionpbx-pilot-api
 h11==0.14.0 \
     --hash=sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d \
@@ -465,6 +471,7 @@ python-dotenv==1.1.0 \
     --hash=sha256:41f90bc6f5f177fb41f53e87666db362025010eb28f60a01c9143bfa33a2b2d5 \
     --hash=sha256:d7c01d9e2293916c18baf562d95698754b0dbbb5e74d457c45d4f6561fb9d55d
     # via
+    #   dotenv
     #   pydantic-settings
     #   uvicorn
     #   webdriver-manager
@@ -511,6 +518,10 @@ pyyaml==6.0.2 \
     --hash=sha256:efdca5630322a10774e8e98e1af481aad470dd62c3170801852d752aa7a783ba \
     --hash=sha256:ff3824dc5261f50c9b0dfb3be22b4567a6f938ccce4587b38952d85fd9e9afe4
     # via uvicorn
+redis==6.1.0 \
+    --hash=sha256:3b72622f3d3a89df2a6041e82acd896b0e67d9f54e9bcd906d091d23ba5219f6 \
+    --hash=sha256:c928e267ad69d3069af28a9823a07726edf72c7e37764f43dc0123f37928c075
+    # via fusionpbx-pilot-api
 requests==2.32.3 \
     --hash=sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760 \
     --hash=sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6

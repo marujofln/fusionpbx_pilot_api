@@ -1,23 +1,23 @@
-# version: '3.8'
-
 services:
   fpbxapi:
     build: .
     container_name: fpbxapi
     hostname: fpbxapi
     restart: unless-stopped
-    expose:
-      - "8000"
-      - "8001"
-#    environment:
+    # expose:
+    #   - 8000
+    # ports:
+    #   - 8000:8000
 
-    depends_on:
-      - db
     command: ["./run.sh"]
 
     networks:
       - fpbxapi-network
-
+    depends_on:
+      - redis
+      - selenium-hub
+    volumes:
+     - /etc/fusionpbx-api/settings.conf:/app/.env
 
 
   caddy:
@@ -28,6 +28,7 @@ services:
     restart: unless-stopped
     ports:
       - 443:443
+      - 8000:8000
     volumes:
       # - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy:/data
@@ -36,7 +37,67 @@ services:
       - fpbxapi-network
     
     depends_on:
-    - app
+    - fpbxapi
+  redis:
+    image: redis:latest
+    container_name: fusionpbx-api-redis
+    hostname: redis
+    restart: unless-stopped
+    # ports:
+      # - 6379:6379
+    networks:
+      - fpbxapi-network
+
+
+  selenium-firefox:
+    image: selenium/node-firefox:4.32.0-20250505
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_NODE_MAX_SESSIONS=3
+      - SE_NODE_SESSION_TIMEOUT=60
+      - SE_NODE_BROWSER_TIMEOUT=60
+      - SE_NODE_KEEP_BROWSER_OPEN=true
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+
+    deploy:
+      replicas: 2
+
+    networks:
+      - fpbxapi-network
+
+      
+  selenium-hub:
+    image: selenium/hub:4.32.0-20250505
+    container_name: selenium-hub
+    hostname: selenium-hub
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
+    environment:
+      - GRID_SESSION_QUEUE=true
+      - GRID_SESSION_QUEUE_TIMEOUT=300
+      - GRID_SESSION_QUEUE_REQUEST_TIMEOUT=300
+      - GRID_MAX_SESSION=5
+      - GRID_NEW_SESSION_WAIT_TIMEOUT=-1
+      - GRID_BROWSER_TIMEOUT=60
+      - GRID_TIMEOUT=60
+      - GRID_CLEAN_UP_CYCLE=60
+      - GRID_POLLING=2000
+      - GRID_DEBUG=true
+      - GRID_SESSION_REQUEST_TIMEOUT=60
+      - GRID_SESSION_TIMEOUT=60
+      - GRID_NODE_TIMEOUT=60
+      - GRID_NODE_POLLING=2000
+      - GRID_NODE_SESSION_TIMEOUT=60
+      - GRID_NODE_SESSION_REQUEST_TIMEOUT=60
+
+    networks:
+      - fpbxapi-network
+   
 
 volumes:
   caddy:

@@ -18,5 +18,11 @@ class Settings(BaseSettings):
     fief_token_path: str = '/api/token'
     fief_client_id: str
     fief_client_secret: str
+    redis_host: str = 'redis'
+    redis_port: int = 6379
+    redis_db: int = 0
+    redis_password: str = ''
+    redis_username: str = ''
+    selenium_grid_url: str = 'http://selenium-hub:4444/wd/hub'
 
 config = Settings()
