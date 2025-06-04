@@ -6,9 +6,11 @@ class SIPProvisioning(BaseModel):
     Schema for SIP provisioning data.
     """
 
+    display_name: str
     user: str
     password: str
     domain: str
+    uri: str
 
 
 class DetailMessage(BaseModel):

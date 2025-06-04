@@ -50,12 +50,12 @@ def get_cached_provisioning(user_id: str):
 
 def set_cached_provisioning(user_id: str, data: dict):
     redis.set(user_id, json.dumps(data))
-    return 
+    return
 
 
 def delete_cached_provisioning(user_id: str):
     redis.delete(user_id)
-    return 
+    return
 
 
 def get_fusionpbx_provisioning_and_set_cache(
@@ -64,7 +64,7 @@ def get_fusionpbx_provisioning_and_set_cache(
     """Retrieves FusionPBX provisioning details for a given user, domain, and extension,
     sets the data in the cache, and returns the SIP provisioning information.
     Args:
-        user_id (int): The ID of the user requesting the provisioning details.
+        user_id (str): The ID of the user requesting the provisioning details.
         domain (str): The domain name associated with the FusionPBX instance.
         extension (str): The extension number to retrieve provisioning details for.
     Returns:
@@ -82,7 +82,9 @@ def get_fusionpbx_provisioning_and_set_cache(
     pbx = get_fusionpbx()
     d = pbx.domain(domain)
     e = d.extension(extension)
-    r = SIPProvisioning(user=e.name, password=e.password, domain=d.name)
+    r = SIPProvisioning(
+        display_name='Display Name', user=e.name, password=e.password, domain=d.name, uri= 'wss//pbx.example.com:7443'
+    )
     # set cached data
     set_cached_provisioning(
         user_id,
