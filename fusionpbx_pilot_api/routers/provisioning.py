@@ -65,9 +65,11 @@ def provisioning(
     cp = get_cached_provisioning(userinfo['sub'])
     if cp and cp['pbx_domain'] == domain and cp['pbx_extension'] == extension:
         return SIPProvisioning(
+            display_name='Display Name',
             user=cp['pbx_extension'],
             password=cp['pbx_secret'],
             domain=cp['pbx_domain'],
+            uri='wss://pbx.example.com:7443',
         )
     else:
         try:
