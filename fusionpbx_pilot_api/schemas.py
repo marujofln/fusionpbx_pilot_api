@@ -13,14 +13,6 @@ class SIPProvisioning(BaseModel):
     uri: str
 
 
-class DetailMessage(BaseModel):
-    """
-    Schema for detail message.
-    """
-
-    message: str
-
-
 class Extension(BaseModel):
     """
     Schema for extension data.

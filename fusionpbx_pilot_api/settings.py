@@ -8,10 +8,13 @@ class FusionPBXSettings(BaseSettings):
         env_prefix='fusionpbx_',
         extra='allow',
     )
-    # TODO add a validator to url.
     url: str
     user: str
     password: str
+    wss_port: int = 7443
+    udp_port: int = 5060
+    tcp_port: int = 5060
+    tls_port: int = 5061
 
 
 class RestAPISettings(BaseSettings):
@@ -26,9 +29,9 @@ class RestAPISettings(BaseSettings):
     origins: list[str] = [
         'http://localhost',
         'http://localhost:8000',
+        'http://127.0.0.1:8000',
         'http://127.0.0.1:8080',
         'http://localhost:8080',
-        'http://127.0.0.1:8080',
     ]
 
 
@@ -43,6 +46,7 @@ class FiefSettings(BaseSettings):
     base_url: str = 'https://auth.example.com'
     authorize_path: str = '/authorize'
     token_path: str = '/api/token'
+    userinfo_path: str = '/api/userinfo'
     client_id: str
     client_secret: str
 
@@ -71,7 +75,6 @@ class SeniumSettings(BaseSettings):
     )
 
     grid_url: str = 'http://selenium-hub:4444/wd/hub'
-    browser: str = 'chrome'
     headless: bool = True
 
 

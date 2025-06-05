@@ -9,8 +9,9 @@ from fusionpbx_pilot.page_objects.core.domain import DomainNotFound
 from fusionpbx_pilot_api.data import (
     get_cached_provisioning,
     get_fusionpbx_provisioning_and_set_cache,
+    get_sip_uri,
 )
-from fusionpbx_pilot_api.schemas import DetailMessage, SIPProvisioning
+from fusionpbx_pilot_api.schemas import SIPProvisioning
 from fusionpbx_pilot_api.security import auth
 from fusionpbx_pilot_api.settings import config
 
@@ -24,15 +25,12 @@ router_v1 = APIRouter(prefix='/v1', tags=['Provisioning'])
     responses={
         HTTPStatus.UNAUTHORIZED: {
             'description': 'Unauthorized',
-            'model': DetailMessage,
         },
         HTTPStatus.EXPECTATION_FAILED: {
             'description': 'Attributes sip domain or sip user not found on authenticated user.',
-            'model': DetailMessage,
         },
         HTTPStatus.NOT_FOUND: {
             'description': 'Domain or extension not found on fusionpbx',
-            'model': DetailMessage,
         },
     },
     summary='Get SIP provisioning data',
@@ -45,7 +43,7 @@ def provisioning(
 ):
     # get user info from auth api
     userinfo = requests.get(
-        config.fief_base_url + '/api/userinfo',
+        config.fief.base_url + config.fief.userinfo_path,
         headers={'Authorization': f'Bearer {access_token_info["access_token"]}'},
     )
 
@@ -54,22 +52,24 @@ def provisioning(
     try:
         domain = userinfo['fields']['pbx_domain']
         extension = userinfo['fields']['pbx_extension']
+        transport = userinfo['fields']['pbx_transport']
     except KeyError as error:
-        msg = DetailMessage(
-            f"User don't has domain or extensions attrs. Error: {error}"
-        )
         raise HTTPException(
             status_code=HTTPStatus.EXPECTATION_FAILED,
-            detail=msg,
+            detail={'message': f"User don't has expected attribute: {error}"},
         )
-    cp = get_cached_provisioning(userinfo['sub'])
-    if cp and cp['pbx_domain'] == domain and cp['pbx_extension'] == extension:
+    cached_provision = get_cached_provisioning(userinfo['sub'])
+    if (
+        cached_provision
+        and cached_provision['pbx_domain'] == domain
+        and cached_provision['pbx_extension'] == extension
+    ):
         return SIPProvisioning(
-            display_name='Display Name',
-            user=cp['pbx_extension'],
-            password=cp['pbx_secret'],
-            domain=cp['pbx_domain'],
-            uri='wss://pbx.example.com:7443',
+            display_name=cached_provision['pbx_display_name'],
+            user=cached_provision['pbx_extension'],
+            password=cached_provision['pbx_secret'],
+            domain=cached_provision['pbx_domain'],
+            uri=get_sip_uri(transport, domain),
         )
     else:
         try:
@@ -77,13 +77,15 @@ def provisioning(
                 userinfo['sub'],
                 domain,
                 extension,
+                transport,
             )
         except DomainNotFound as error:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail=DetailMessage(str(error)),
+                detail=str(error),
             )
         except ExtensionNotFound as error:
-            msg = DetailMessage(f'{error} for domain {domain}')
-            raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=msg)
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND, detail=f'{error} for domain {domain}'
+            )
         return r

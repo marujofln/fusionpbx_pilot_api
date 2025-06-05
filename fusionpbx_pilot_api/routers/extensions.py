@@ -6,14 +6,25 @@ from fusionpbx_pilot.page_objects.apps.extension import ExtensionNotFound
 from fusionpbx_pilot.page_objects.core.domain import DomainNotFound
 
 from fusionpbx_pilot_api.data import get_fusionpbx
-from fusionpbx_pilot_api.schemas import DetailMessage as DetailMessageSchema
 from fusionpbx_pilot_api.schemas import Extension as ExtensionSchema
 from fusionpbx_pilot_api.security import auth
 
 router_v1 = APIRouter(prefix='/v1', tags=['Extensions'])
 
 
-@router_v1.get('/domain/{domain}/extensions', status_code=HTTPStatus.OK)
+@router_v1.get(
+    '/domain/{domain}/extensions',
+    status_code=HTTPStatus.OK,
+    responses={
+        HTTPStatus.NOT_FOUND: {
+            'description': 'Domain found on fusionpbx',
+        },
+        HTTPStatus.OK: {
+            'description': 'Returns the extension',
+            'model': ExtensionSchema,
+        },
+    },
+)
 def extensions_list(
     domain: str,
     access_token_info: FiefAccessTokenInfo = Depends(
@@ -22,7 +33,10 @@ def extensions_list(
 ) -> list:
     # list extensions
     fusionpbx = get_fusionpbx()
-    d = fusionpbx.domain(domain)
+    try:
+        d = fusionpbx.domain(domain)
+    except DomainNotFound as error:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=str(error))
     return d.extensions.list()
 
 
@@ -32,7 +46,6 @@ def extensions_list(
     responses={
         HTTPStatus.NOT_FOUND: {
             'description': 'Domain or extension not found on fusionpbx',
-            'model': DetailMessageSchema,
         },
         HTTPStatus.OK: {
             'description': 'Returns the extension',
@@ -49,8 +62,8 @@ def extension_get(
 ):
     # get extension
     fusionpbx = get_fusionpbx()
-    d = fusionpbx.domain(domain)
     try:
+        d = fusionpbx.domain(domain)
         e = d.extension(extension)
         return e.__dict__()
     except (ExtensionNotFound, DomainNotFound) as error:
@@ -63,7 +76,6 @@ def extension_get(
     responses={
         HTTPStatus.EXPECTATION_FAILED: {
             'description': 'Domain not created.',
-            'model': DetailMessageSchema,
         },
         HTTPStatus.OK: {
             'description': 'Returns the extension',
@@ -71,7 +83,6 @@ def extension_get(
         },
         HTTPStatus.NOT_FOUND: {
             'description': 'Domain or extension not found on fusionpbx',
-            'model': DetailMessageSchema,
         },
     },
 )
@@ -104,7 +115,6 @@ def extension_create(
     responses={
         HTTPStatus.EXPECTATION_FAILED: {
             'description': 'Extension not updated',
-            'model': DetailMessageSchema,
         },
         HTTPStatus.OK: {
             'description': 'Returns the extension',
@@ -112,7 +122,6 @@ def extension_create(
         },
         HTTPStatus.NOT_FOUND: {
             'description': 'Domain or extension not found on fusionpbx',
-            'model': DetailMessageSchema,
         },
     },
 )
@@ -146,11 +155,9 @@ def extension_rename(
     responses={
         HTTPStatus.EXPECTATION_FAILED: {
             'description': 'Extension not deleted',
-            'model': DetailMessageSchema,
         },
         HTTPStatus.NOT_FOUND: {
             'description': 'Domain or extension not found on fusionpbx',
-            'model': DetailMessageSchema,
         },
     },
 )
@@ -162,8 +169,8 @@ def extension_delete(
     ),
 ):
     # delete extension
+    fusionpbx = get_fusionpbx()
     try:
-        fusionpbx = get_fusionpbx()
         d = fusionpbx.domain(domain)
         e = d.extension(extension)
     except (ExtensionNotFound, DomainNotFound) as error:
@@ -180,15 +187,12 @@ def extension_delete(
     responses={
         HTTPStatus.EXPECTATION_FAILED: {
             'description': 'Unable to update voicemail setting',
-            'model': DetailMessageSchema,
         },
         HTTPStatus.OK: {
             'description': 'Returns the extension',
-            'model': ExtensionSchema,
         },
         HTTPStatus.NOT_FOUND: {
             'description': 'Domain or extension not found on fusionpbx',
-            'model': DetailMessageSchema,
         },
     },
 )
@@ -223,7 +227,6 @@ def extension_voicemail_enable_toggle(
     responses={
         HTTPStatus.EXPECTATION_FAILED: {
             'description': 'Unable to update voicemail setting',
-            'model': DetailMessageSchema,
         },
         HTTPStatus.OK: {
             'description': 'Returns the extension',
@@ -231,7 +234,6 @@ def extension_voicemail_enable_toggle(
         },
         HTTPStatus.NOT_FOUND: {
             'description': 'Domain or extension not found on fusionpbx',
-            'model': DetailMessageSchema,
         },
     },
 )
@@ -266,7 +268,6 @@ def set_extension_voicemail_mail_to(
     responses={
         HTTPStatus.EXPECTATION_FAILED: {
             'description': 'Extension not updated',
-            'model': DetailMessageSchema,
         },
         HTTPStatus.OK: {
             'description': 'Returns the extension',
@@ -274,7 +275,6 @@ def set_extension_voicemail_mail_to(
         },
         HTTPStatus.NOT_FOUND: {
             'description': 'Domain or extension not found on fusionpbx',
-            'model': DetailMessageSchema,
         },
     },
 )

@@ -30,6 +30,22 @@ else:
     )
 
 
+def get_sip_uri(transport: str, domain: str) -> str:
+    """
+    Get the SIP URI based on the transport and domain.
+    """
+    if transport == 'wss':
+        return f'wss://{domain}:{config.fusionpbx.wss_port}'
+    elif transport == 'udp':
+        return f'sip://{domain}:{config.fusionpbx.udp_port};transport=udp'
+    elif transport == 'tcp':
+        return f'sip:{domain}:{config.fusionpbx.tcp_port};transport=tcp'
+    elif transport == 'tls':
+        return f'sips:{domain}:{config.fusionpbx.tls_port};transport=tls'
+    else:
+        raise ValueError(f'Unsupported transport: {transport}')
+
+
 def get_fusionpbx():
     driver = webdriver.Remote(
         command_executor=config.selenium.grid_url,
@@ -64,7 +80,7 @@ def delete_cached_provisioning(user_id: str):
 
 
 def get_fusionpbx_provisioning_and_set_cache(
-    user_id: str, domain: str, extension: str
+    user_id: str, domain: str, extension: str, transport: str
 ) -> SIPProvisioning | ExtensionNotFound | DomainNotFound:
     """Retrieves FusionPBX provisioning details for a given user, domain, and extension,
     sets the data in the cache, and returns the SIP provisioning information.
@@ -92,7 +108,7 @@ def get_fusionpbx_provisioning_and_set_cache(
         user=e.name,
         password=e.password,
         domain=d.name,
-        uri='wss//pbx.example.com:7443',
+        uri=get_sip_uri(transport, domain),
     )
     # set cached data
     set_cached_provisioning(
@@ -101,6 +117,7 @@ def get_fusionpbx_provisioning_and_set_cache(
             'pbx_domain': d.name,
             'pbx_extension': e.name,
             'pbx_secret': e.password,
+            'pbx_display_name': 'Display Name',
         },
     )
     pbx.browser.quit()

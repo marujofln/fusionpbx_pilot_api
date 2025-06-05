@@ -5,7 +5,6 @@ from fief_client import FiefAccessTokenInfo
 from fusionpbx_pilot.page_objects.core.domain import DomainNotFound
 
 from fusionpbx_pilot_api.data import get_fusionpbx
-from fusionpbx_pilot_api.schemas import DetailMessage as DetailMessageSchema
 from fusionpbx_pilot_api.schemas import Domain as DomainSchema
 from fusionpbx_pilot_api.security import auth
 
@@ -28,8 +27,7 @@ def domains_list(
     responses={
         HTTPStatus.OK: {'description': 'Domain found', 'model': DomainSchema},
         HTTPStatus.NOT_FOUND: {
-            'description': 'Domain or extension not found on fusionpbx',
-            'model': DetailMessageSchema,
+            'description': 'Domain  not found on fusionpbx',
         },
     },
 )
@@ -47,7 +45,7 @@ def domain_get(
     except DomainNotFound as error:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
-            detail=error,
+            detail=str(error),
         )
 
 
@@ -58,7 +56,6 @@ def domain_get(
         HTTPStatus.OK: {'description': 'Domain created', 'model': DomainSchema},
         HTTPStatus.EXPECTATION_FAILED: {
             'description': 'Domain not created',
-            'model': DetailMessageSchema,
         },
     },
 )
@@ -83,7 +80,6 @@ def domain_create(
         HTTPStatus.OK: {'description': 'Domain renamed', 'model': DomainSchema},
         HTTPStatus.EXPECTATION_FAILED: {
             'description': 'Domain not renamed',
-            'model': DetailMessageSchema,
         },
     },
 )
