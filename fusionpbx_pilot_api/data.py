@@ -80,7 +80,7 @@ def delete_cached_provisioning(user_id: str):
 
 
 def get_fusionpbx_provisioning_and_set_cache(
-    user_id: str, domain: str, extension: str, transport: str
+    user_id: str, domain: str, extension: str, transport: str, display_name: str
 ) -> SIPProvisioning | ExtensionNotFound | DomainNotFound:
     """Retrieves FusionPBX provisioning details for a given user, domain, and extension,
     sets the data in the cache, and returns the SIP provisioning information.
@@ -104,7 +104,7 @@ def get_fusionpbx_provisioning_and_set_cache(
     d = pbx.domain(domain)
     e = d.extension(extension)
     r = SIPProvisioning(
-        display_name='Display Name',
+        display_name=display_name,
         user=e.name,
         password=e.password,
         domain=d.name,
@@ -117,7 +117,7 @@ def get_fusionpbx_provisioning_and_set_cache(
             'pbx_domain': d.name,
             'pbx_extension': e.name,
             'pbx_secret': e.password,
-            'pbx_display_name': 'Display Name',
+            'pbx_display_name': display_name,
         },
     )
     pbx.browser.quit()

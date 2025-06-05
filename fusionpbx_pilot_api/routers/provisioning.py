@@ -53,6 +53,7 @@ def provisioning(
         domain = userinfo['fields']['pbx_domain']
         extension = userinfo['fields']['pbx_extension']
         transport = userinfo['fields']['pbx_transport']
+        display_name = userinfo['fields']['display_name']
     except KeyError as error:
         raise HTTPException(
             status_code=HTTPStatus.EXPECTATION_FAILED,
@@ -63,6 +64,7 @@ def provisioning(
         cached_provision
         and cached_provision['pbx_domain'] == domain
         and cached_provision['pbx_extension'] == extension
+        and cached_provision['pbx_display_name'] == display_name
     ):
         return SIPProvisioning(
             display_name=cached_provision['pbx_display_name'],
@@ -78,6 +80,7 @@ def provisioning(
                 domain,
                 extension,
                 transport,
+                display_name
             )
         except DomainNotFound as error:
             raise HTTPException(
