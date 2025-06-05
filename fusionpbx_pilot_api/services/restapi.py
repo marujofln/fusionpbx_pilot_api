@@ -6,9 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from fusionpbx_pilot_api.__init__ import __version__
 from fusionpbx_pilot_api.routers import domains, extensions, me, provisioning
-from fusionpbx_pilot_api.settings import Settings
-
-config = Settings()
+from fusionpbx_pilot_api.settings import config
 
 logging.basicConfig(
     format='%(asctime)s [WEBSERVER] %(levelname)-8s %(message)s',
@@ -20,17 +18,11 @@ app = FastAPI(
     title='FusionPBX Pilot API',
     version=__version__,
 )
-origins = [
-    'http://localhost',
-    'http://localhost:8000',
-    'http://127.0.0.1:8080',
-    'http://localhost:8080',
-]
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=config.restapi.origins,
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],

@@ -11,31 +11,36 @@ from fusionpbx_pilot_api.schemas import SIPProvisioning
 from fusionpbx_pilot_api.settings import config
 
 options = Options()
-options.add_argument('--headless')  # Run in headless mode
 
-if config.redis_username and config.redispassword:
+if config.selenium.headless:
+    options.add_argument('--headless')  # Run in headless mode
+
+
+if config.redis.username and config.redis.password:
     redis = redis.Redis(
-        host=config.redis_host,
-        port=config.redis_port,
-        db=0,
+        host=config.redis.host,
+        port=config.redis.port,
+        db=config.redis.db,
         username=config.redis.username,
         password=config.redis.password,
     )
 else:
-    redis = redis.StrictRedis(host=config.redis_host, port=config.redis_port, db=0)
+    redis = redis.StrictRedis(
+        host=config.redis.host, port=config.redis.port, db=config.redis.db
+    )
 
 
 def get_fusionpbx():
     driver = webdriver.Remote(
-        command_executor=config.selenium_grid_url,
+        command_executor=config.selenium.grid_url,
         options=options,
     )
 
     fpbx = FusionPBX(
         driver,
-        config.fusionpbx_url,
-        config.fusionpbx_user,
-        config.fusionpbx_password,
+        config.fusionpbx.url,
+        config.fusionpbx.user,
+        config.fusionpbx.password,
     )
     return fpbx
 
@@ -83,7 +88,11 @@ def get_fusionpbx_provisioning_and_set_cache(
     d = pbx.domain(domain)
     e = d.extension(extension)
     r = SIPProvisioning(
-        display_name='Display Name', user=e.name, password=e.password, domain=d.name, uri= 'wss//pbx.example.com:7443'
+        display_name='Display Name',
+        user=e.name,
+        password=e.password,
+        domain=d.name,
+        uri='wss//pbx.example.com:7443',
     )
     # set cached data
     set_cached_provisioning(
