@@ -103,7 +103,7 @@ def domain_rename(
         )
 
 
-@router_v1.delete('/v1/domain/{domain}', status_code=HTTPStatus.OK)
+@router_v1.delete('/domain/{domain}', status_code=HTTPStatus.OK)
 async def domain_delete(
     domain: str,
     access_token_info: FiefAccessTokenInfo = Depends(
