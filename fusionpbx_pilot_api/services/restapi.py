@@ -27,6 +27,7 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
+logging.info(f'Allowed origins: {config.restapi.origins}')
 
 # routers include
 app.include_router(me.router_v1)
