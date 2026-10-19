@@ -62,7 +62,7 @@ Settings are read from environment variables or a `.env` file (see [`.env.sample
 | `FUSIONPBX_WSS_PORT` / `_UDP_PORT` / `_TCP_PORT` / `_TLS_PORT` | 7443 / 5060 / 5060 / 5061 | Ports used to build the SIP URI |
 | `RESTAPI_HOST` / `RESTAPI_PORT` | `0.0.0.0` / `8000` | Listen address |
 | `RESTAPI_ORIGINS` | localhost variants | Allowed CORS origins (JSON list) |
-| `FIEF_BASE_URL` | `https://auth.example.com` | Fief server URL |
+| `FIEF_BASE_URL` | — | Fief server URL (required) |
 | `FIEF_CLIENT_ID` / `FIEF_CLIENT_SECRET` | — | Fief OAuth2 client |
 | `REDIS_HOST` / `REDIS_PORT` / `REDIS_DB` | `redis` / `6379` / `0` | Redis connection |
 | `REDIS_USERNAME` / `REDIS_PASSWORD` | empty | Redis auth (optional) |

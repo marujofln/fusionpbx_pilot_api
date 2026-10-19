@@ -43,7 +43,7 @@ class FiefSettings(BaseSettings):
         extra='allow',
     )
 
-    base_url: str = 'https://auth.example.com'
+    base_url: str
     authorize_path: str = '/authorize'
     token_path: str = '/api/token'
     userinfo_path: str = '/api/userinfo'
