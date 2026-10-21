@@ -76,6 +76,8 @@ Settings are read from environment variables or a `.env` file (see [`.env.sample
 The compose file brings up the API, Redis, a Selenium Grid (hub + 2 Firefox nodes) and Caddy as a TLS reverse proxy. It mounts `/etc/fusionpbx-api/settings.conf` as the API's `.env`:
 
 ```bash
+git clone https://github.com/marujofln/fusionpbx_pilot_api.git
+cd fusionpbx_pilot_api
 sudo mkdir -p /etc/fusionpbx-api
 sudo cp .env.sample /etc/fusionpbx-api/settings.conf   # then edit it
 # adjust the Caddy hostname in docker-compose.yml
